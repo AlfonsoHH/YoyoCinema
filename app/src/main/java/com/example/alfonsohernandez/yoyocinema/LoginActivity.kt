@@ -24,6 +24,7 @@ import com.facebook.GraphRequest
 import com.google.android.gms.analytics.GoogleAnalytics
 import java.util.*
 import com.google.firebase.analytics.FirebaseAnalytics
+import dk.nodes.nstack.kotlin.NStack
 
 
 class LoginActivity : AppCompatActivity() {
@@ -54,6 +55,15 @@ class LoginActivity : AppCompatActivity() {
         val pref = getSharedPreferences("pref",Context.MODE_PRIVATE)
 
         Semail = pref.getString("email","")
+
+        when (pref.getString("language", "")) {
+            "es-ES" -> {
+                NStack.setLanguageByString("es-ES")
+            }
+            "en_EN" -> {
+                NStack.setLanguageByString("en_EN")
+            }
+        }
 
         tvPlease.text = Translation.defaultSection.loginPlease
         tvThanks.text = Translation.defaultSection.loginThanks
@@ -145,6 +155,8 @@ class LoginActivity : AppCompatActivity() {
         //Facebook login
         accessTokenTracker.stopTracking()
         profileTracker.stopTracking()
+
+        System.out.println("Feature")
 
         GoogleAnalytics.getInstance(this@LoginActivity).reportActivityStop(this)
     }

@@ -46,12 +46,7 @@ class Tab4Fragment : Fragment() {
         tvNStackFN = rootView.findViewById<TextView>(R.id.tvNStackFirstName)
         tvNStackLN = rootView.findViewById<TextView>(R.id.tvNSatckLastName)
 
-        tvNStackLN.text = Translation.defaultSection.profileFirstName
-        tvNStackFN.text = Translation.defaultSection.profileLastName
-
         pref = this.activity!!.getSharedPreferences("pref", Context.MODE_PRIVATE)
-
-
 
         tvName.text = pref.getString("firstName", "BBBBB")
         tvLast.text = pref.getString("lastName", "CCCCCC")
@@ -67,10 +62,15 @@ class Tab4Fragment : Fragment() {
         spinner.setAdapter(spinnerArrayAdapter)
 
         when (pref.getString("language", NStack.language.language)) {
-            "es-ES" -> spinner.setSelection(0)
-            "en_EN" -> spinner.setSelection(1)
+            "es-ES" -> {
+                spinner.setSelection(0)
+                NStack.setLanguageByString("es-ES")
+            }
+            "en_EN" -> {
+                spinner.setSelection(1)
+                NStack.setLanguageByString("en_EN")
+            }
         }
-
 
         spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View?, position: Int, id: Long) {
@@ -114,7 +114,6 @@ class Tab4Fragment : Fragment() {
     }
 
     fun changeLanguage(language: String) {
-        if (!pref.getString("language", "en_EN").equals(language)) {
 
             val prefEditor = pref.edit()
             prefEditor.putString("language", language)
@@ -128,8 +127,6 @@ class Tab4Fragment : Fragment() {
             tvNStackFN.text = Translation.defaultSection.profileLastName
 
             println(NStack.language)
-
-        }
 
     }
 
