@@ -70,28 +70,6 @@
         android:layout_weight="1"/>
 
     <TextView
-        android:id="@+id/textView9"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textAlignment="center"
-        android:textStyle="bold"
-        tools:text="Original Language" />
-
-    <TextView
-        android:id="@+id/languageDetail"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="TextView"
-        android:textAlignment="center"
-        tools:text="English" />
-
-    <Space
-        android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="1" />
-
-    <TextView
         android:id="@+id/textView11"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -120,6 +98,18 @@
         android:layout_height="wrap_content"
         android:numStars="5"
         android:rating="3" />
+
+    <Space
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1" />
+
+    <ImageButton
+        android:id="@+id/imageButtonFav"
+        android:layout_width="40dp"
+        android:layout_height="40dp"
+        app:srcCompat="@android:drawable/btn_star"
+        android:background="@null"/>
 
     <Space
         android:layout_width="match_parent"

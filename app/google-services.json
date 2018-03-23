@@ -1,0 +1,55 @@
+{
+  "project_info": {
+    "project_number": "384120868083",
+    "firebase_url": "https://yoyocinema-82ed4.firebaseio.com",
+    "project_id": "yoyocinema-82ed4",
+    "storage_bucket": "yoyocinema-82ed4.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:384120868083:android:74499a91faec38d7",
+        "android_client_info": {
+          "package_name": "com.example.alfonsohernandez.yoyocinema"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "384120868083-2agr7jj03tu9t8vosid0i6aomvh7ga7v.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.alfonsohernandez.yoyocinema",
+            "certificate_hash": "dd42930623ec713877d7393d92eb13ba3ffc1fac"
+          }
+        },
+        {
+          "client_id": "384120868083-jqlgmfbk787pbrqtf0fq0ld7mm8gi6c5.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD6YEBe7AuEAFF5KfvZd8S8bs7YmFUDfb0"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 2,
+          "other_platform_oauth_client": [
+            {
+              "client_id": "384120868083-jqlgmfbk787pbrqtf0fq0ld7mm8gi6c5.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

@@ -3,7 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.alfonsohernandez.yoyocinema.Tab1Fragment"
+    tools:context="com.example.alfonsohernandez.yoyocinema.FragmentTabs.Tab1Fragment"
     android:padding="10dp"
     android:orientation="vertical"
     android:gravity="center">
@@ -16,7 +16,7 @@
         android:layout_weight="1"/>
 
     <ImageView
-        android:id="@+id/imageView"
+        android:id="@+id/imageViewProfilePhoto"
         android:layout_width="150dp"
         android:layout_height="150dp"
 
@@ -29,6 +29,7 @@
 
 
     <TextView
+        android:id="@+id/tvNStackFirstName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="First Name"
@@ -36,10 +37,10 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView"
+        android:id="@+id/textViewFirstName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Alfonso"
+        android:text="AAAAAA"
         android:textAlignment="center" />
 
     <Space
@@ -48,7 +49,7 @@
         android:layout_weight="1"/>
 
     <TextView
-        android:id="@+id/textView2"
+        android:id="@+id/tvNSatckLastName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="Last Name"
@@ -56,10 +57,10 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView3"
+        android:id="@+id/textViewLastName"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Hernandez"
+        android:text="HHHHHHHH"
         android:textAlignment="center" />
 
     <Space
@@ -76,7 +77,7 @@
         android:textStyle="bold" />
 
     <TextView
-        android:id="@+id/textView5"
+        android:id="@+id/textViewMail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:text="mail@mail.com"
@@ -96,8 +97,8 @@
         android:textStyle="bold" />
 
     <Spinner
-        android:id="@+id/spinner"
-        android:layout_width="match_parent"
+        android:id="@+id/spinnerLanguage"
+        android:layout_width="150dp"
         android:layout_height="wrap_content" />
 
     <Space
@@ -105,11 +106,13 @@
         android:layout_height="0dp"
         android:layout_weight="1" />
 
-    <Button
+    <com.facebook.login.widget.LoginButton
         android:id="@+id/buttonLogout"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="LogOut" />
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="30dp"
+        android:layout_marginBottom="30dp" />
 
     <Space
         android:layout_width="match_parent"

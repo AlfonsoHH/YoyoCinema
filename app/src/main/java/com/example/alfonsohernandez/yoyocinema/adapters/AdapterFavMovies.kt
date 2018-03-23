@@ -8,20 +8,20 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.LinearLayout
 import android.widget.TextView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.target.SimpleTarget
 import com.bumptech.glide.request.transition.Transition
 import com.example.alfonsohernandez.yoyocinema.MovieDetailActivity
-import com.example.alfonsohernandez.yoyocinema.POJOMovie.ResultsItem
 import com.example.alfonsohernandez.yoyocinema.R
+import com.example.alfonsohernandez.yoyocinema.POJOMovie.MovieFav
+import com.example.alfonsohernandez.yoyocinema.POJOMovie.ResultsItem
 import jp.wasabeef.blurry.Blurry
 
 /**
  * Created by alfonsohernandez on 15/03/2018.
  */
-class AdapterListDiscoveries(val movieList: List<ResultsItem?>?, val activity: Activity): RecyclerView.Adapter<AdapterListDiscoveries.ViewHolder>() {
+class AdapterFavMovies(val movieList: List<MovieFav?>?, val activity: Activity): RecyclerView.Adapter<AdapterFavMovies.ViewHolder>() {
     override fun onBindViewHolder(holder: ViewHolder, position: Int) {
         holder.bindItems(movieList!!.get(position))
     }
@@ -38,7 +38,7 @@ class AdapterListDiscoveries(val movieList: List<ResultsItem?>?, val activity: A
     class ViewHolder(itemView: View, val activity: Activity): RecyclerView.ViewHolder(itemView){
 
 
-        fun bindItems(movie: ResultsItem?){
+        fun bindItems(movie: MovieFav?){
 
             val txtName = itemView.findViewById<TextView>(R.id.txtTitleRV)
             val txtTitle = itemView.findViewById<TextView>(R.id.txtDescriptionRV)
@@ -58,8 +58,9 @@ class AdapterListDiscoveries(val movieList: List<ResultsItem?>?, val activity: A
             Glide.with(activity).load("http://image.tmdb.org/t/p/w185/"+movie?.posterPath).into(foto)
 
             itemView.setOnClickListener({
-                var intent:Intent = Intent(activity, MovieDetailActivity::class.java)
-                intent.putExtra("movie",movie)
+                var intent: Intent = Intent(activity, MovieDetailActivity::class.java)
+                val moviConversion = ResultsItem(movie?.overview,null,null,null,movie?.title,null,movie?.posterPath,null,movie?.releaseDate,movie?.voteAverage,null,null,null,null)
+                intent.putExtra("movie",moviConversion)
                 activity.startActivity(intent)
 
             })

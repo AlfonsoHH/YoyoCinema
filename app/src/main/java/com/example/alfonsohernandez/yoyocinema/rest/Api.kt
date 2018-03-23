@@ -1,7 +1,7 @@
 package com.example.alfonsohernandez.yoyocinema.rest
 
-import com.example.alfonsohernandez.yoyocinema.models.Movie
-import com.example.alfonsohernandez.yoyocinema.models.Response
+import com.example.alfonsohernandez.yoyocinema.POJOMovie.Movie
+import com.example.alfonsohernandez.yoyocinema.POJOMovie.Response
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -18,7 +18,7 @@ interface Api {
     @GET("/3/discover/movie/")
     fun getDiscoveryMovies(@Query("api_key") apiKey: String): Call<Response>
 
-    @GET("/search/movie")
+    @GET("/3/search/movie")
     fun getSearchedMovie(@Query("api_key") apiKey: String,@Query("query") query: String): Call<Response>
 
 }
