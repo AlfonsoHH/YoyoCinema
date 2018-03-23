@@ -2,7 +2,6 @@ package com.example.alfonsohernandez.yoyocinema.FragmentTabs
 
 import android.annotation.SuppressLint
 import android.app.Dialog
-import android.content.Context
 import android.content.pm.PackageManager
 import android.location.Location
 import android.os.Bundle
@@ -36,9 +35,7 @@ import com.google.android.gms.maps.model.MarkerOptions
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.gms.tasks.Task
 import com.google.maps.android.clustering.Cluster
-import com.google.maps.android.clustering.ClusterItem
 import com.google.maps.android.clustering.ClusterManager
-import com.google.maps.android.clustering.view.DefaultClusterRenderer
 import retrofit2.Call
 import retrofit2.Callback
 
@@ -237,6 +234,8 @@ class Tab1Fragment : Fragment(), OnMapReadyCallback, GoogleApiClient.OnConnectio
 
                     mClusterManager = ClusterManager<Cinema>(context!!, mMap)
 
+                    //mMap!!.setInfoWindowAdapter(CustomInfoWindowAdapter(context!!))
+
                     mMap!!.setOnCameraIdleListener(mClusterManager)
                     mMap!!.setOnMarkerClickListener(mClusterManager)
                     mMap!!.setOnInfoWindowClickListener(mClusterManager)
@@ -271,6 +270,79 @@ class Tab1Fragment : Fragment(), OnMapReadyCallback, GoogleApiClient.OnConnectio
                         markerOptions.icon(BitmapDescriptorFactory.defaultMarker(BitmapDescriptorFactory.HUE_RED))
 
                     }
+
+                    mClusterManager.setOnClusterClickListener(object : ClusterManager.OnClusterClickListener<Cinema>{
+                        override fun onClusterClick(p0: Cluster<Cinema>?): Boolean {
+                            // custom dialog
+                            var dialog = Dialog(context);
+                            dialog.setContentView(R.layout.cinema_information);
+                            dialog.setTitle("Movie Theater");
+
+                            // set the custom dialog components - text, image and button
+                            var name = dialog.findViewById<TextView>(R.id.tvCinemaName)
+
+                            var texto: String? = ""
+
+                            for (item in p0!!.items){
+                                texto = texto + item.name+ "\n"
+                            }
+
+                            name.text = texto
+
+                            var dialogButton = dialog.findViewById<Button>(R.id.btCinemaDialog)
+                            // if button is clicked, close the custom dialog
+                            dialogButton.setOnClickListener(object : View.OnClickListener {
+                                override fun onClick(v: View?) {
+                                    dialog.dismiss()
+                                }
+                            })
+
+                            dialog.show()
+
+                            return true
+                        }
+                    })
+
+                    mClusterManager.setOnClusterItemClickListener(object : ClusterManager.OnClusterItemClickListener<Cinema>{
+                        override fun onClusterItemClick(p0: Cinema?): Boolean {
+                            Log.d(TAG,p0!!.name)
+
+                            // custom dialog
+                            var dialog = Dialog(context);
+                            dialog.setContentView(R.layout.cinema_information);
+                            dialog.setTitle("Movie Theater");
+
+                            // set the custom dialog components - text, image and button
+                            var name = dialog.findViewById<TextView>(R.id.tvCinemaName)
+                            var address = dialog.findViewById<TextView>(R.id.tvCinemaDirection)
+                            var photo = dialog.findViewById<ImageView>(R.id.ivCinemaPhoto)
+
+                            for (markerNow in markers) {
+                                if (p0!!.name.equals(markerNow.name)) {
+
+
+                                    name.text = markerNow.name
+                                    address.text = markerNow.vicinity
+
+                                    markerNow.photos?.let {
+                                        Glide.with(activity!!).load("https://maps.googleapis.com/maps/api/place/photo?maxwidth=300&photoreference=" + it[0]!!.photoReference + "&key=AIzaSyDwSirgtRvVHy32qzbSfHmeK8Oh21iij2Q").into(photo)
+                                    }
+                                }
+                            }
+
+                            var dialogButton = dialog.findViewById<Button>(R.id.btCinemaDialog)
+                            // if button is clicked, close the custom dialog
+                            dialogButton.setOnClickListener(object : View.OnClickListener {
+                                override fun onClick(v: View?) {
+                                    dialog.dismiss()
+                                }
+                            })
+
+                            dialog.show()
+
+                            return true
+                        }
+                    })
 
                     mClusterManager.cluster()
                 } catch (e: Exception) {
@@ -356,4 +428,5 @@ class Tab1Fragment : Fragment(), OnMapReadyCallback, GoogleApiClient.OnConnectio
 
     override fun onConnectionSuspended(p0: Int) {
     }
+
 }

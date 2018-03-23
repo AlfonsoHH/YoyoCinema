@@ -27,4 +27,5 @@ class Cinema(lat: Double, lng: Double, var name: String?, private val vicinity: 
     override fun getSnippet(): String {
         return vicinity
     }
+
 }

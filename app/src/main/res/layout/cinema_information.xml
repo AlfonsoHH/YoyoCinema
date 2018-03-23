@@ -22,14 +22,13 @@
     <ImageView
         android:id="@+id/ivCinemaPhoto"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        app:srcCompat="@drawable/cast_ic_stop_circle_filled_grey600" />
+        android:layout_height="wrap_content" />
 
     <TextView
         android:id="@+id/tvCinemaDirection"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="TextView" />
+        android:text="" />
 
     <Button
         android:id="@+id/btCinemaDialog"
