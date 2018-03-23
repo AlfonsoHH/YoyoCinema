@@ -156,8 +156,6 @@ class LoginActivity : AppCompatActivity() {
         accessTokenTracker.stopTracking()
         profileTracker.stopTracking()
 
-        System.out.println("Feature")
-
         GoogleAnalytics.getInstance(this@LoginActivity).reportActivityStop(this)
     }
 
