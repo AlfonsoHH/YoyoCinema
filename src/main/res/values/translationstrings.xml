@@ -1,0 +1,4 @@
+<resources>
+  <string name='defaultLoginPlease' formatted='false'>Please login with your Facebook account</string>
+  <string name='defaultLoginThanks' formatted='false'>Thanks!!!</string>
+</resources>
