@@ -4,7 +4,9 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context="com.example.alfonsohernandez.yoyocinema.LoginActivity"
+    xmlns:nstack="http://schemas.android.com/apk/res-auto"
+    tools:ignore="MissingPrefix"
+    tools:context="com.example.alfonsohernandez.yoyocinema.presentation.login.LoginActivity"
     android:orientation="vertical"
     android:gravity="center">
 
@@ -17,7 +19,7 @@
         android:id="@+id/tvPlease"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Please log with your facebook account"
+        android:text="@string/nstack_default_loginPlease"
         android:textAlignment="center" />
 
     <Space
@@ -29,7 +31,7 @@
         android:id="@+id/tvThanks"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Thanks!!!"
+        android:text="@string/nstack_default_loginThanks"
         android:textAlignment="center" />
 
 

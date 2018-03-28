@@ -7,6 +7,7 @@ translation {
     appId = "KdO5k3gm55PdpGMAuXXL2HydpiPPSKG4TUSA"
     apiKey = "0XVzVKLgXdOQGdiYA4kJ6A69YftJxToQR9VD"
     acceptHeader = "en_EN"
+    autoRunUpdate = false
 }
 
 android {
@@ -17,7 +18,7 @@ android {
                 appId : translation.appId,
                 apiKey: translation.apiKey
         ]
-
+        multiDexEnabled true
         applicationId "com.example.alfonsohernandez.yoyocinema"
         minSdkVersion 21
         targetSdkVersion 27
@@ -76,7 +77,12 @@ dependencies {
     compile 'com.google.android.gms:play-services-places:12.0.0'
     compile 'com.google.android.gms:play-services-location:12.0.0'
     compile 'com.google.android.gms:play-services:12.0.0'
+
     compile 'com.google.maps.android:android-maps-utils:0.5'
+
+    compile "com.google.dagger:dagger:2.5"
+    kapt "com.google.dagger:dagger-compiler:2.5"
 }
 
 apply plugin: 'com.google.gms.google-services'
+apply plugin: 'kotlin-kapt'

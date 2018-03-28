@@ -37,13 +37,13 @@
             android:value="${apiKey}"
             tools:replace="android:value" />
 
-        <activity android:name=".MovieDetailActivity" />
+        <activity android:name=".presentation.movie.MovieDetailActivity" />
 
         <activity
-            android:name=".TabActivity"
+            android:name=".presentation.TabActivity"
             android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"/>
-        <activity android:name=".LoginActivity"
+        <activity android:name=".presentation.login.LoginActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
