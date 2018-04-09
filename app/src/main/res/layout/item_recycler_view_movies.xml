@@ -60,8 +60,8 @@
                     <TextView
                         android:id="@+id/txtDescriptionRV"
                         android:layout_width="match_parent"
-                        android:layout_height="match_parent"
-                        android:maxLines="1"
+                        android:layout_height="40dp"
+                        android:maxLines="2"
                         android:text="Occupation"
                         android:textAppearance="@style/Base.TextAppearance.AppCompat.Medium"
                         android:textColor="@color/cardview_light_background"
