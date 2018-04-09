@@ -1,11 +1,9 @@
 package com.example.alfonsohernandez.yoyocinema.presentation.profile
 
 import android.util.Log
-import com.example.alfonsohernandez.yoyocinema.domain.interactors.nstack.GetNStackLanguageInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.nstack.SetNstackLanguageInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.preference.GetUserProfileInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.preference.SaveUserProfileInteractor
-import com.example.alfonsohernandez.yoyocinema.domain.models.Translation
 import java.util.*
 import javax.inject.Inject
 
@@ -40,7 +38,5 @@ class ProfilePresenter @Inject constructor(
         var profile = getUserProfileInteractor.getProfile()
         profile?.language = language
         saveUserProfileInteractor.save(profile)
-
-        Log.d(TAG,"After saving profile: "+getUserProfileInteractor.getProfile()?.language?.language)
     }
 }

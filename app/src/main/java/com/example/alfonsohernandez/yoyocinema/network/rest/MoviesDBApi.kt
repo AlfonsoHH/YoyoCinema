@@ -2,6 +2,7 @@ package com.example.alfonsohernandez.yoyocinema.network.rest
 
 import com.example.alfonsohernandez.yoyocinema.domain.models.Movie
 import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResponse
+import io.reactivex.Single
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Path
@@ -18,7 +19,13 @@ interface MoviesDBApi {
     @GET("/3/discover/movie/")
     fun getDiscoveryMovies(@Query("api_key") apiKey: String): Call<MovieResponse>
 
+    @GET("/3/discover/movie/")
+    fun getDiscoveryMoviesRxJava(@Query("api_key") apiKey: String): Single<MovieResponse>
+
     @GET("/3/search/movie")
     fun getSearchedMovie(@Query("api_key") apiKey: String,@Query("query") query: String): Call<MovieResponse>
+
+    @GET("/3/search/movie")
+    fun getSearchedMovieRxJava(@Query("api_key") apiKey: String,@Query("query") query: String): Single<MovieResponse>
 
 }

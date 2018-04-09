@@ -1,11 +1,13 @@
 package com.example.alfonsohernandez.yoyocinema.presentation.movie
 
+import android.app.Dialog
 import android.content.Context
 import android.net.ConnectivityManager
 import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import android.util.AttributeSet
 import android.util.Log
+import android.view.MenuItem
 import android.view.View
 import android.view.animation.Animation
 import android.view.animation.AnimationUtils
@@ -15,8 +17,10 @@ import com.example.alfonsohernandez.yoyocinema.App
 import com.example.alfonsohernandez.yoyocinema.R
 import com.example.alfonsohernandez.yoyocinema.domain.injection.modules.PresentationModule
 import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResultsItem
+import com.example.alfonsohernandez.yoyocinema.domain.setVisibility
 import io.paperdb.Paper
 import kotlinx.android.synthetic.main.activity_movie_detail.*
+import kotlinx.android.synthetic.main.fragment_favorites.*
 import javax.inject.Inject
 
 class MovieDetailActivity : AppCompatActivity(), MovieDetailContract.View {
@@ -32,10 +36,12 @@ class MovieDetailActivity : AppCompatActivity(), MovieDetailContract.View {
 
     private val TAG = "MovieDetailActivity"
 
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_movie_detail)
+        setSupportActionBar(toolbarMovieDetail)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
 
         injectDependencies()
 
@@ -43,9 +49,10 @@ class MovieDetailActivity : AppCompatActivity(), MovieDetailContract.View {
         Log.d(TAG, list.get(0).title)
 
         movieID = intent.getStringExtra("movie")
-        presenter.setView(this, movieID)
+        presenter.setView(this)
 
         presenter.loadCache(movieID)
+        presenter.loadFirebaseData(movieID)
 
         imageButtonFav.setOnClickListener {
             onFavoriteClicked()
@@ -54,7 +61,7 @@ class MovieDetailActivity : AppCompatActivity(), MovieDetailContract.View {
     }
 
     override fun onDestroy() {
-        presenter.setView(null, movieID)
+        presenter.setView(null)
         super.onDestroy()
     }
 
@@ -69,16 +76,23 @@ class MovieDetailActivity : AppCompatActivity(), MovieDetailContract.View {
         dateDetail.text = data.releaseDate
         ratingDetail.rating = data.voteAverage!!.toFloat() / 2
 
+        if(existe){
+            imageButtonFav.setImageResource(android.R.drawable.star_big_on)
+        }
+
         movie = data
     }
 
     fun onFavoriteClicked() {
+
         if (isNetworkAvailable()) {
-            presenter.loadFirebaseData(movieID)
             if (!existe) {
+                imageButtonFav.setImageResource(android.R.drawable.star_big_on)
                 imageButtonFav.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotate))
                 presenter.addFavorite(movie)
+                existe=true
             } else {
+                imageButtonFav.setImageResource(android.R.drawable.star_big_off)
                 imageButtonFav.startAnimation(AnimationUtils.loadAnimation(applicationContext, R.anim.rotateback))
                 presenter.eraseFavorite(movieID)
                 existe=false
@@ -86,6 +100,7 @@ class MovieDetailActivity : AppCompatActivity(), MovieDetailContract.View {
         } else {
             Toast.makeText(applicationContext, "Action is not avaliable in without data conexion", Toast.LENGTH_LONG).show()
         }
+
     }
 
     override fun favoriteExist(value: Boolean) {
@@ -93,16 +108,24 @@ class MovieDetailActivity : AppCompatActivity(), MovieDetailContract.View {
     }
 
     override fun showProgress(isLoading: Boolean) {
-        println("Showing progress")
+        progressBarMovieDetail.setVisibility(isLoading)
+        containerMovieDetail.setVisibility(!isLoading)
     }
 
     override fun showError() {
-        Toast.makeText(this, "Error", Toast.LENGTH_LONG).show()
+        Toast.makeText(this, "Network Error", Toast.LENGTH_LONG).show()
     }
 
     private fun isNetworkAvailable(): Boolean {
         val connectivityManager = this.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetworkInfo = connectivityManager.activeNetworkInfo
         return activeNetworkInfo != null && activeNetworkInfo.isConnected
+    }
+
+    override fun onOptionsItemSelected(item: MenuItem?): Boolean {
+        if(item?.itemId==android.R.id.home){
+            finish()
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

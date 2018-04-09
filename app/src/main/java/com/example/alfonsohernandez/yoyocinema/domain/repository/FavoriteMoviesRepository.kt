@@ -16,7 +16,7 @@ class FavoriteMoviesRepository {
 
     fun addFavoriteMovie(user: String?, movie: MovieResultsItem){
         val userInstance = firebaseInstance.child(user)
-        userInstance.child(userInstance.push().key).setValue(movie).addOnCompleteListener { println("Data added") }
+        userInstance.child(movie.id.toString()).setValue(movie).addOnCompleteListener { println("Data added") }
     }
 
     fun removeFavoriteMovie(user: String?,movieId: String){

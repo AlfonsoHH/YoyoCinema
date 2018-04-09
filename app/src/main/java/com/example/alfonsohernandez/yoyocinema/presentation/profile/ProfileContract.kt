@@ -11,7 +11,6 @@ interface ProfileContract {
     interface View {
 
         fun setData(userProfile: UserProfile?)
-        fun setTranslation(firstName: String, lastName: String)
         fun showError()
 
     }

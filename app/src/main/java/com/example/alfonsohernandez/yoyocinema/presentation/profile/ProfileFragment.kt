@@ -31,7 +31,6 @@ import javax.inject.Inject
 class ProfileFragment : Fragment(), ProfileContract.View {
 
     private val TAG = "ProfileFragment"
-    private val SPANISH = Locale("es", "ES")
 
     @Inject
     lateinit var presenter: ProfilePresenter
@@ -40,24 +39,14 @@ class ProfileFragment : Fragment(), ProfileContract.View {
         return inflater.inflate(R.layout.fragment_profile, container, false)
     }
 
-    fun startLoginActivity() {
-        val intent = Intent(activity, LoginActivity::class.java)
-        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
-        startActivity(intent)
-        activity?.finish()
-    }
-
-    override fun onDestroy() {
-        presenter.setView(null)
-        super.onDestroy()
-    }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
         injectDependencies()
 
-        var spinnerArrayAdapter = ArrayAdapter<Locale>(context, android.R.layout.simple_spinner_item, NStack.availableLanguages)
+        val list = NStack.availableLanguages
+        val listString = list.map { it.displayName }
+        var spinnerArrayAdapter = ArrayAdapter<String>(context, android.R.layout.simple_spinner_item, listString)
         spinnerArrayAdapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
 
         spinnerLanguage.setAdapter(spinnerArrayAdapter)
@@ -66,9 +55,11 @@ class ProfileFragment : Fragment(), ProfileContract.View {
 
         spinnerLanguage.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onItemSelected(parentView: AdapterView<*>?, selectedItemView: View?, position: Int, id: Long) {
-                val selectedLocale = spinnerLanguage.selectedItem as Locale
-                Log.d(TAG, "NStack LOCALE SELECTED $selectedLocale")
-                presenter.saveLanguage(selectedLocale)
+                when(spinnerLanguage.selectedItemPosition){
+                    0 -> presenter.saveLanguage(list.get(0))
+                    1 -> presenter.saveLanguage(list.get(1))
+                }
+
             }
 
             override fun onNothingSelected(parentView: AdapterView<*>) {
@@ -99,25 +90,32 @@ class ProfileFragment : Fragment(), ProfileContract.View {
         textViewLastName.text = userProfile?.lastName
         textViewMail.text = userProfile?.email
 
-        when (userProfile?.language) {
-            NStack.availableLanguages[0] -> {
+        when (userProfile?.language!!.displayName) {
+            NStack.availableLanguages[0].displayName -> {
                 spinnerLanguage.setSelection(0)
                 Log.d(TAG,"Inside Opcion 1")
             }
-            NStack.availableLanguages[1] -> {
+            NStack.availableLanguages[1].displayName -> {
                 spinnerLanguage.setSelection(1)
                 Log.d(TAG,"Inside Opcion 2")
             }
         }
     }
 
-    override fun setTranslation(firstName: String, lastName: String) {
-        tvNStackFirstName.text = firstName
-        tvNSatckLastName.text = lastName
-    }
-
     override fun showError() {
         Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
+    }
+
+    fun startLoginActivity() {
+        val intent = Intent(activity, LoginActivity::class.java)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
+        startActivity(intent)
+        activity?.finish()
+    }
+
+    override fun onDestroy() {
+        presenter.setView(null)
+        super.onDestroy()
     }
 
 

@@ -8,7 +8,7 @@ import io.paperdb.Paper
 /**
  * Created by alfonsohernandez on 26/03/2018.
  */
-class Database(context: Context) {
+open class Database(context: Context) {
 
     private val TAG = "Database"
 
@@ -17,14 +17,14 @@ class Database(context: Context) {
     }
 
     fun readData(key: String): List<MovieResultsItem>{
-        //var movie:MovieResultsItem = Paper.book().read(key)
-        //Log.d(TAG,movie.title)
-        val list: List<MovieResultsItem> = Paper.book().read(key)
-
-        return list
+        try {
+            return Paper.book().read(key)
+        }catch(e: IllegalStateException){
+            return listOf()
+        }
     }
 
-    fun addData(key: String, item: MovieResultsItem){
+    fun addData(key: String, item: List<MovieResultsItem>){
         Paper.book().write(key,item)
     }
 
@@ -35,7 +35,7 @@ class Database(context: Context) {
     fun updateData(key: String, list: List<MovieResultsItem>){
         eraseData(key)
 
-        Paper.book().write(key,list)
+        addData(key,list)
 
     }
 

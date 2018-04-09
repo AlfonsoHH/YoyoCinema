@@ -4,7 +4,6 @@ package com.example.alfonsohernandez.yoyocinema.presentation.adapters
  * Created by alfonsohernandez on 16/03/2018.
  */
 
-import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.app.FragmentManager
 import android.support.v4.app.FragmentPagerAdapter
@@ -12,46 +11,34 @@ import com.example.alfonsohernandez.yoyocinema.presentation.map.MapFragment
 import com.example.alfonsohernandez.yoyocinema.presentation.discover.DiscoverFragment
 import com.example.alfonsohernandez.yoyocinema.presentation.favorites.FavoritesFragment
 import com.example.alfonsohernandez.yoyocinema.presentation.profile.ProfileFragment
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.example.alfonsohernandez.yoyocinema.presentation.tabs.TabPresenter
 
-class AdapterTabPager(fm: FragmentManager, private var tabCount: Int, mFirebase: FirebaseAnalytics) :
+class AdapterTabPager(fm: FragmentManager, private var tabCount: Int, presenter: TabPresenter) :
         FragmentPagerAdapter(fm) {
 
-    var  mFirebaseAnalytics: FirebaseAnalytics? = null
+    var  presenter: TabPresenter? = null
 
     init {
-        this.mFirebaseAnalytics = mFirebase
+        this.presenter = presenter
     }
 
     override fun getItem(position: Int): Fragment? {
 
         when (position) {
             0 -> {
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "3")
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Map pageview")
-                mFirebaseAnalytics!!.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT,bundle)
+                presenter!!.firebaseEvent("3","Map pageview")
                 return MapFragment()
             }
             1 -> {
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "4")
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Movies pageview")
-                mFirebaseAnalytics!!.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT,bundle)
+                presenter!!.firebaseEvent("4","Movies pageview")
                 return DiscoverFragment()
             }
             2 -> {
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "5")
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Favorites pageview")
-                mFirebaseAnalytics!!.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT,bundle)
+                presenter!!.firebaseEvent("5","Favorites pageview")
                 return FavoritesFragment()
             }
             3 -> {
-                val bundle = Bundle()
-                bundle.putString(FirebaseAnalytics.Param.ITEM_ID, "6")
-                bundle.putString(FirebaseAnalytics.Param.ITEM_NAME, "Profile pageview")
-                mFirebaseAnalytics!!.logEvent(FirebaseAnalytics.Event.SELECT_CONTENT,bundle)
+                presenter!!.firebaseEvent("6","Profile pageview")
                 return ProfileFragment()
             }
             else -> return null

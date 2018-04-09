@@ -8,8 +8,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context="com.example.alfonsohernandez.yoyocinema.presentation.movie.MovieDetailActivity"
-    android:padding="20dp">
-<Space
+    >
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbarMovieDetail"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/colorPrimary" />
+
+    <LinearLayout
+        android:id="@+id/containerMovieDetail"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical"
+        android:gravity="center"
+        android:padding="20dp">
+
+    <Space
     android:layout_width="wrap_content"
     android:layout_height="0dp"
     android:layout_weight="1"/>
@@ -108,11 +123,20 @@
         android:id="@+id/imageButtonFav"
         android:layout_width="40dp"
         android:layout_height="40dp"
-        app:srcCompat="@android:drawable/btn_star"
+        app:srcCompat="@android:drawable/star_big_off"
         android:background="@null"/>
 
     <Space
         android:layout_width="match_parent"
         android:layout_height="0dp"
         android:layout_weight="1" />
+
+    </LinearLayout>
+
+    <ProgressBar
+        android:id="@+id/progressBarMovieDetail"
+        style="?android:attr/progressBarStyle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"/>
 </LinearLayout>

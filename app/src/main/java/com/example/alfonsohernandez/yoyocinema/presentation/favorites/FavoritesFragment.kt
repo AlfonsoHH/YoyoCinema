@@ -1,11 +1,13 @@
 package com.example.alfonsohernandez.yoyocinema.presentation.favorites
 
+import android.app.Dialog
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v7.widget.LinearLayoutManager
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -15,8 +17,10 @@ import com.example.alfonsohernandez.yoyocinema.App
 import com.example.alfonsohernandez.yoyocinema.R
 import com.example.alfonsohernandez.yoyocinema.domain.injection.modules.PresentationModule
 import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResultsItem
+import com.example.alfonsohernandez.yoyocinema.domain.setVisibility
 import com.example.alfonsohernandez.yoyocinema.presentation.movie.MovieDetailActivity
 import com.example.alfonsohernandez.yoyocinema.presentation.adapters.AdapterMovies
+import kotlinx.android.synthetic.main.fragment_discover.*
 import kotlinx.android.synthetic.main.fragment_favorites.*
 import javax.inject.Inject
 
@@ -29,9 +33,9 @@ class FavoritesFragment : Fragment(), SearchView.OnQueryTextListener, FavoritesC
     @Inject
     lateinit var presenter: FavoritesPresenter
 
-    var favoritesList: List<MovieResultsItem> = mutableListOf()
-
     var adapter = AdapterMovies()
+
+    private val TAG = "FavoritesFragment"
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         return inflater.inflate(R.layout.fragment_favorites, container, false)
@@ -48,11 +52,7 @@ class FavoritesFragment : Fragment(), SearchView.OnQueryTextListener, FavoritesC
         injectDependencies()
 
         presenter.setView(this)
-        if(isNetworkAvailable()){
-            presenter.loadFirebaseData() as? List<MovieResultsItem>
-        }else{
-            presenter.loadCache()
-        }
+
         setupRecycler()
 
         searchMovieFav.setOnQueryTextListener(this)
@@ -67,7 +67,7 @@ class FavoritesFragment : Fragment(), SearchView.OnQueryTextListener, FavoritesC
         rvMoviesFavFragment.adapter = adapter
 
         adapter.onMovieClickedListener = { movie ->
-            val intent: Intent = Intent(context, MovieDetailActivity::class.java)
+            val intent = Intent(context, MovieDetailActivity::class.java)
 
             presenter.updateCache("movie-"+movie.id.toString(), listOf(movie))
 
@@ -83,10 +83,12 @@ class FavoritesFragment : Fragment(), SearchView.OnQueryTextListener, FavoritesC
     }
 
     override fun showProgress(isLoading: Boolean) {
-        println("Showing progress")
+        progressBarFavorites.setVisibility(isLoading)
+        rvMoviesFavFragment.setVisibility(!isLoading)
     }
 
     override fun onQueryTextSubmit(query: String): Boolean {
+        showProgress(true)
         queryMethods(query)
         return true
     }
@@ -97,31 +99,17 @@ class FavoritesFragment : Fragment(), SearchView.OnQueryTextListener, FavoritesC
     }
 
     fun queryMethods(query: String) {
-        if(favoritesList!!.isNotEmpty()){
-            if(!searchMovieFav.query.equals("")) {
-                if(isNetworkAvailable()){
-                    presenter.loadSearchData(query)
-                }else{
-                    presenter.loadSearchDataOffline(query)
-                }
-            }else{
-                if(isNetworkAvailable()) {
-                    presenter.loadFirebaseData()
-                }else{
-                    presenter.loadCache()
-                }
-            }
+        if(!searchMovieFav.query.equals("")) {
+            presenter.loadSearchDataOffline(query)
+            presenter.loadSearchData(query)
+        }else{
+            presenter.loadCache()
+            presenter.loadFirebaseData()
         }
     }
 
     override fun showError() {
-        Toast.makeText(context, "Error", Toast.LENGTH_LONG).show()
-    }
-
-    private fun isNetworkAvailable(): Boolean {
-        val connectivityManager = context!!.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
-        val activeNetworkInfo = connectivityManager.activeNetworkInfo
-        return activeNetworkInfo != null && activeNetworkInfo.isConnected
+        Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()
     }
 
 }

@@ -1,6 +1,8 @@
 package com.example.alfonsohernandez.yoyocinema.domain.interactors.searchmovies
 
+import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResponse
 import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResultsItem
+import io.reactivex.Single
 
 
 /**
@@ -13,4 +15,6 @@ interface GetSearchMoviesInteractor {
     }
 
     fun getDataMovies(callback: getSearchMoviesInterface, query: String)
+
+    fun getDataMoviesRxJava(query:String): Single<MovieResponse>
 }

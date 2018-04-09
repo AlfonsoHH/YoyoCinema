@@ -15,6 +15,7 @@ import javax.inject.Singleton
         AppModule::class,
         InteractorModule::class,
         ApiModule::class,
+        GoogleApiModule::class,
         DatabaseModule::class,
         PreferenceModule::class,
         RepositoryModule::class

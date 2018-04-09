@@ -8,7 +8,7 @@ data class Response(
         @field:SerializedName("html_attributions")
         val htmlAttributions: List<Any?>? = null,
         @field:SerializedName("results")
-        val results: List<ResultsItem?>? = null,
+        val results: List<ResultsItem>? = null,
         @field:SerializedName("status")
         val status: String? = null
 )

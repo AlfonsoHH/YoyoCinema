@@ -1,6 +1,9 @@
 package com.example.alfonsohernandez.yoyocinema.domain.interactors.discovermovies
 
+import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResponse
 import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResultsItem
+import com.example.alfonsohernandez.yoyocinema.domain.models.Response
+import io.reactivex.Single
 import retrofit2.Callback
 
 /**
@@ -13,4 +16,6 @@ interface GetDiscoverMoviesInteractor {
     }
 
     fun getDataMovies(callback: getDiscoverMoviesCallback)
+
+    fun getDataMoviesRxJava(): Single<MovieResponse>
 }

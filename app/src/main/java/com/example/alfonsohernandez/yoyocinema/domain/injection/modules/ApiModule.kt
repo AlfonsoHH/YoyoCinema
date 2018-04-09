@@ -8,6 +8,7 @@ import dagger.Provides
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import retrofit2.adapter.rxjava2.RxJava2CallAdapterFactory
 import retrofit2.converter.gson.GsonConverterFactory
 
 @Module(includes = arrayOf(AppModule::class))
@@ -17,7 +18,7 @@ class ApiModule() {
     @AppScope
     fun providesLoggingInterceptor(): HttpLoggingInterceptor {
         val loggingInterceptor = HttpLoggingInterceptor()
-        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY
+        loggingInterceptor.level = HttpLoggingInterceptor.Level.BODY   //BODY
         return loggingInterceptor
     }
 
@@ -36,6 +37,7 @@ class ApiModule() {
                 .baseUrl("https://api.themoviedb.org/3/")
                 .client(okHttpClient)
                 .addConverterFactory(GsonConverterFactory.create())
+                .addCallAdapterFactory(RxJava2CallAdapterFactory.create())
                 .build()
 
         val service = retrofit.create<MoviesDBApi>(MoviesDBApi::class.java)

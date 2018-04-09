@@ -4,7 +4,6 @@ import android.support.v7.app.AppCompatActivity
 import android.os.Bundle
 import com.facebook.login.LoginResult
 import android.content.Intent
-import android.view.View
 import com.facebook.*
 import com.facebook.AccessToken
 import android.content.Context
@@ -12,32 +11,23 @@ import android.content.pm.PackageManager
 import android.support.v4.app.ActivityCompat
 import android.support.v4.content.ContextCompat
 import android.util.Log
-import android.widget.ArrayAdapter
+import android.widget.Toast
 import com.facebook.ProfileTracker
 import com.facebook.AccessTokenTracker
 import com.facebook.FacebookException
-import android.widget.Toast
 import com.example.alfonsohernandez.yoyocinema.App
 import com.example.alfonsohernandez.yoyocinema.R
 import com.example.alfonsohernandez.yoyocinema.domain.injection.modules.PresentationModule
-import com.example.alfonsohernandez.yoyocinema.domain.models.Translation
-import com.example.alfonsohernandez.yoyocinema.domain.models.User
 import com.example.alfonsohernandez.yoyocinema.domain.models.UserProfile
-import com.example.alfonsohernandez.yoyocinema.presentation.TabActivity
-import com.example.alfonsohernandez.yoyocinema.presentation.profile.ProfilePresenter
+import com.example.alfonsohernandez.yoyocinema.presentation.tabs.TabActivity
 import com.facebook.FacebookCallback
-import com.facebook.login.widget.LoginButton
 import kotlinx.android.synthetic.main.activity_login.*
 import org.json.JSONException
 import com.facebook.GraphRequest
-import com.facebook.login.LoginManager
-import com.google.android.gms.analytics.GoogleAnalytics
-import java.util.*
-import com.google.firebase.analytics.FirebaseAnalytics
+import com.urbanairship.UAirship
 import dk.nodes.nstack.kotlin.NStack
+import java.util.*
 import dk.nodes.nstack.kotlin.inflater.NStackBaseContext
-import io.paperdb.Paper
-import kotlinx.android.synthetic.main.fragment_profile.*
 import javax.inject.Inject
 
 
@@ -53,13 +43,15 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
     lateinit var accessTokenTracker: AccessTokenTracker
     lateinit var profileTracker: ProfileTracker
 
-    var userEmail = ""
+     var userMail: String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        FacebookSdk.sdkInitialize(applicationContext)
         setContentView(R.layout.activity_login)
 
+        UAirship.shared().getPushManager().setUserNotificationsEnabled(true)
+
+        ///// PERMISSIONS
         if (ContextCompat.checkSelfPermission(this, android.Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, arrayOf(android.Manifest.permission.ACCESS_FINE_LOCATION), 0)
         }
@@ -67,29 +59,21 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
         injectDependencies()
         presenter.setView(this)
 
+        ///// TOKEN TRACKER AND PROFILE TRACKER
         accessTokenTracker = object : AccessTokenTracker() {
             override
-            protected fun onCurrentAccessTokenChanged(oldToken: AccessToken?, newToken: AccessToken?) {
+            fun onCurrentAccessTokenChanged(oldToken: AccessToken?, newToken: AccessToken?) {
             }
         }
-
-        profileTracker = object : ProfileTracker() {
-            override
-            protected fun onCurrentProfileChanged(oldProfile: Profile?, newProfile: Profile?) {
-                presenter.saveProfileData(newProfile)
-            }
-        }
-
         accessTokenTracker.startTracking()
-        profileTracker.startTracking()
 
+        ///// CALLBACK MANAGER
         callbackManager = CallbackManager.Factory.create()
 
-        val loginButton = findViewById<View>(R.id.login_button) as LoginButton
-
+        ///// CALLBACK
         val callback = object : FacebookCallback<LoginResult> {
             override fun onSuccess(loginResult: LoginResult) {
-                val profile = Profile.getCurrentProfile()
+
 
                 val request = GraphRequest.newMeRequest(loginResult.accessToken) { user, response ->
                     // Get facebook data from login
@@ -97,17 +81,19 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
 
                         presenter.firebaseEvent("2","Login success action")
 
-                        val userNow = UserProfile(profile.getProfilePictureUri(150, 150).toString(),
-                                profile.firstName,
-                                profile.lastName,
+                        val profile = Profile.getCurrentProfile()
+
+                        profile?.let {
+                            val userNow = UserProfile(it.getProfilePictureUri(150, 150).toString(),
+                                it.firstName,
+                                it.lastName,
                                 user.getString("email"),
-                                Locale.ENGLISH)
+                                Locale.getDefault())
 
-                        presenter.saveProfileData(userNow)
+                            presenter.saveProfileData(userNow)
+                        }
 
-                        Log.d(TAG, "This is the mail: " + user.getString("email"))
-
-                        nextActivity(profile)
+                        profileTracker()
 
                     } catch (e: JSONException) {
 
@@ -124,35 +110,56 @@ class LoginActivity : AppCompatActivity(), LoginContract.View {
 
             override fun onCancel() {}
 
-            override fun onError(e: FacebookException) {}
+            override fun onError(e: FacebookException) {
+                Toast.makeText(baseContext,"Network Error",Toast.LENGTH_SHORT).show()
+            }
         }
 
-        loginButton.setReadPermissions(Arrays.asList("email"))
-        loginButton.registerCallback(callbackManager, callback)
+        ///// LOGIN BUTTON
+        login_button.setReadPermissions(Arrays.asList("email"))
+        login_button.registerCallback(callbackManager, callback)
 
+        ///// CHECKING PREVIOUS LOGIN
         if (AccessToken.getCurrentAccessToken() != null) {
             nextActivity()
         }
 
+        ///// FIREBASE ANALITICS
         presenter.firebaseEvent("1","Login pageview")
 
     }
 
     override fun onResume() {
         super.onResume()
-        val profile = Profile.getCurrentProfile()
-        nextActivity(profile)
+
     }
 
     override fun onStop() {
         super.onStop()
         accessTokenTracker.stopTracking()
-        profileTracker.stopTracking()
+        //profileTracker.stopTracking()
     }
 
     override fun onDestroy() {
         presenter.setView(null)
         super.onDestroy()
+    }
+
+    fun profileTracker(){
+        profileTracker = object : ProfileTracker() {
+        override
+        fun onCurrentProfileChanged(oldProfile: Profile?, newProfile: Profile?) {
+
+            userMail?.let {
+                val userProfile = UserProfile(newProfile!!.getProfilePictureUri(150,150).toString(),
+                        newProfile.firstName,newProfile.lastName,
+                        it,
+                        NStack.availableLanguages.get(1))
+                presenter.saveProfileData(userProfile)
+            } }
+
+        }
+        profileTracker.startTracking()
     }
 
 

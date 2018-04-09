@@ -1,5 +1,6 @@
 package com.example.alfonsohernandez.yoyocinema.presentation.movie
 
+import android.util.Log
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.cache.GetCacheInfoInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebasefavorites.AddFavoriteMovieInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebasefavorites.GetFavoriteMoviesInteractor
@@ -18,13 +19,12 @@ class MovieDetailPresenter @Inject constructor(private val getCacheInfoInteracto
     private var view: MovieDetailContract.View? = null
     private val TAG: String = "MovieDetailPresenter"
 
-    fun setView(view: MovieDetailContract.View?,movieId: String) {
+    fun setView(view: MovieDetailContract.View?) {
         this.view = view
     }
 
     override fun loadCache(movieId: String){
-        //var movie = getCacheInfoInteractor.getInfoInCache("movie-"+movieId).get(0) as MovieResultsItem
-        view?.setData(getCacheInfoInteractor.getInfoInCache("movie-"+movieId).get(0) as MovieResultsItem)
+        view?.setData(getCacheInfoInteractor.getInfoInCache("movie-"+movieId).get(0))
     }
 
     override fun addFavorite(movie: MovieResultsItem) {
@@ -36,18 +36,25 @@ class MovieDetailPresenter @Inject constructor(private val getCacheInfoInteracto
     }
 
     override fun loadFirebaseData(movieId: String) {
+        view?.showProgress(true)
         getFavoriteMoviesInteractor.getFirebaseDataMovies(getUserProfileInteractor.getProfile()?.firstName, object : FirebaseCallback<ArrayList<MovieResultsItem>> {
             override fun onDataReceived(data: ArrayList<MovieResultsItem>) {
-
+                view?.showProgress(false)
+                var existe = false
+                var movie = MovieResultsItem()
                 for (item in data){
                     if(item.id==movieId.toInt()){
-                        view?.favoriteExist(true)
+                        existe=true
+                        movie = item
                     }
                 }
-
+                view?.favoriteExist(existe)
+                if(existe){
+                    view?.setData(movie)
+                }
             }
-
             override fun onError(error: DatabaseError) {
+                view?.showProgress(false)
                 view?.showError()
             }
 

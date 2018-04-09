@@ -1,13 +1,14 @@
 package com.example.alfonsohernandez.yoyocinema.domain.interactors.firebaseanalytics
 
+import android.content.Context
 import android.os.Bundle
 import com.google.firebase.analytics.FirebaseAnalytics
 
 /**
  * Created by alfonsohernandez on 28/03/2018.
  */
-class newUseFirebaseAnalyticsInteractorImpl: newUseFirebaseAnalyticsInteractor {
-    var mFirebaseAnalytics: FirebaseAnalytics? = null
+class NewUseFirebaseAnalyticsInteractorImpl(context: Context): NewUseFirebaseAnalyticsInteractor {
+    var mFirebaseAnalytics: FirebaseAnalytics? = FirebaseAnalytics.getInstance(context)
 
     override fun sendingDataFirebaseAnalytics(id: String, activityName: String) {
         val bundle = Bundle()

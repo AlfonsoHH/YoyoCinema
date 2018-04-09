@@ -1,5 +1,6 @@
 package com.example.alfonsohernandez.yoyocinema.presentation.favorites
 
+import android.util.Log
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.cache.GetCacheInfoInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.cache.SetCacheInfoInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebasefavorites.GetFavoriteMoviesInteractor
@@ -20,12 +21,19 @@ class FavoritesPresenter @Inject constructor(private val getCacheInfoInteractor:
 
     private var view: FavoritesContract.View? = null
 
+    private val TAG = "FavoritesPresenter"
+
+
     fun setView(view: FavoritesContract.View?) {
         this.view = view
+        loadCache()
+        loadFirebaseData()
     }
 
     override fun loadCache(): List<MovieResultsItem> {
-        return getCacheInfoInteractor.getInfoInCache("user-"+ GetUserProfileInteractor.getProfile()?.firstName)
+        val list = getCacheInfoInteractor.getInfoInCache("user-"+ GetUserProfileInteractor.getProfile()?.firstName)
+        view?.setData(list)
+        return list
     }
 
     override fun updateUserCache(list: List<MovieResultsItem>) {
@@ -37,27 +45,32 @@ class FavoritesPresenter @Inject constructor(private val getCacheInfoInteractor:
     }
 
     override fun loadSearchData(searchString: String) {
-        getFavoriteMoviesInteractor.getFirebaseDataMovies(GetUserProfileInteractor.getProfile()?.firstName, object : FirebaseCallback<ArrayList<MovieResultsItem>> {
+        getFavoriteMoviesInteractor.getFirebaseDataMovies(GetUserProfileInteractor.getProfile()?.firstName,
+                object : FirebaseCallback<ArrayList<MovieResultsItem>> {
+
             override fun onDataReceived(data: ArrayList<MovieResultsItem>) {
-                val dataVar = data.filter { it.title == searchString }
+                view?.showProgress(false)
+                val dataVar = data.filter { it.title!!.contains(searchString)  }
                 view?.setData(dataVar)
             }
-
             override fun onError(error: DatabaseError) {
+                view?.showProgress(false)
                 view?.showError()
             }
-
         })
     }
 
     override fun loadFirebaseData() {
+        view?.showProgress(true)
         getFavoriteMoviesInteractor.getFirebaseDataMovies(GetUserProfileInteractor.getProfile()?.firstName, object : FirebaseCallback<ArrayList<MovieResultsItem>> {
             override fun onDataReceived(data: ArrayList<MovieResultsItem>) {
+                view?.showProgress(false)
                 updateUserCache(data)
                 view?.setData(data)
             }
 
             override fun onError(error: DatabaseError) {
+                view?.showProgress(false)
                 view?.showError()
             }
 

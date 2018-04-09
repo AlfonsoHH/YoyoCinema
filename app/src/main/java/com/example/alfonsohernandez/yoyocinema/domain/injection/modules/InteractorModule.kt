@@ -1,11 +1,14 @@
 package com.example.alfonsohernandez.yoyocinema.domain.injection.modules
 
+import android.content.Context
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.cache.*
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.discovermovies.GetDiscoverMoviesInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.discovermovies.GetDiscoverMoviesInteractorImpl
-import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebaseanalytics.newUseFirebaseAnalyticsInteractor
-import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebaseanalytics.newUseFirebaseAnalyticsInteractorImpl
+import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebaseanalytics.NewUseFirebaseAnalyticsInteractor
+import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebaseanalytics.NewUseFirebaseAnalyticsInteractorImpl
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebasefavorites.*
+import com.example.alfonsohernandez.yoyocinema.domain.interactors.mapnearbyplaces.GetGoogleMapNearbyPlacesInteractor
+import com.example.alfonsohernandez.yoyocinema.domain.interactors.mapnearbyplaces.GetGoogleMapNearbyPlacesInteractorImpl
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.nstack.GetNStackLanguageInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.nstack.GetNStackLanguageInteractorImpl
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.nstack.SetNstackLanguageInteractor
@@ -17,10 +20,10 @@ import com.example.alfonsohernandez.yoyocinema.domain.interactors.preference.Sav
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.searchmovies.GetSearchMoviesInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.searchmovies.GetSearchMoviesInteractorImpl
 import com.example.alfonsohernandez.yoyocinema.domain.repository.FavoriteMoviesRepository
+import com.example.alfonsohernandez.yoyocinema.network.rest.GoogleApi
 import com.example.alfonsohernandez.yoyocinema.network.rest.MoviesDBApi
 import com.example.alfonsohernandez.yoyocinema.storage.database.Database
 import com.example.alfonsohernandez.yoyocinema.storage.database.UserProfileDatabase
-import com.example.alfonsohernandez.yoyocinema.storage.preferences.MyPreferencesManager
 import dagger.Module
 import dagger.Provides
 
@@ -82,7 +85,13 @@ class InteractorModule {
     }
 
     @Provides
-    fun providesNewUseFirebaseAnalyticsInteractorImpl(): newUseFirebaseAnalyticsInteractor {
-        return newUseFirebaseAnalyticsInteractorImpl()
+    fun providesNewUseFirebaseAnalyticsInteractorImpl(context: Context): NewUseFirebaseAnalyticsInteractor {
+        return NewUseFirebaseAnalyticsInteractorImpl(context)
     }
+
+    @Provides
+    fun providesGetGoogleMapNearbyPlacesInteractorImpl(googleApi: GoogleApi): GetGoogleMapNearbyPlacesInteractor {
+        return GetGoogleMapNearbyPlacesInteractorImpl(googleApi)
+    }
+
 }

@@ -3,6 +3,6 @@ package com.example.alfonsohernandez.yoyocinema.domain.interactors.firebaseanaly
 /**
  * Created by alfonsohernandez on 28/03/2018.
  */
-interface newUseFirebaseAnalyticsInteractor {
+interface NewUseFirebaseAnalyticsInteractor {
     fun sendingDataFirebaseAnalytics(id: String, activityName: String)
 }
