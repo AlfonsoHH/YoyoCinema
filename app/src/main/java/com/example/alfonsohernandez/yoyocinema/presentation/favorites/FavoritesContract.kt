@@ -11,6 +11,7 @@ interface FavoritesContract {
         fun setData(data: List<MovieResultsItem>)
         fun showProgress(isLoading:Boolean)
         fun showError()
+        fun showNoResults()
 
     }
 

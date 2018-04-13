@@ -24,7 +24,7 @@ import android.widget.*
 import com.example.alfonsohernandez.yoyocinema.domain.setVisibility
 
 
-open class DiscoverFragment : Fragment(), DiscoverContract.View, SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener {
+class DiscoverFragment : Fragment(), DiscoverContract.View, SearchView.OnQueryTextListener, SwipeRefreshLayout.OnRefreshListener {
 
     @Inject
     lateinit var presenter: DiscoverPresenter
@@ -64,13 +64,17 @@ open class DiscoverFragment : Fragment(), DiscoverContract.View, SearchView.OnQu
         rvMoviesFragment.adapter = adapter
 
         adapter.onMovieClickedListener = { movie ->
-            val intent = Intent(context, MovieDetailActivity::class.java)
-
-            presenter.updateCache("movie-" + movie.id.toString(), listOf(movie))
-
-            intent.putExtra("movie", movie.id.toString())
-            startActivity(intent)
+            goToMovieDetail(movie)
         }
+    }
+
+    fun goToMovieDetail(movie: MovieResultsItem){
+        val intent = Intent(context, MovieDetailActivity::class.java)
+
+        presenter.updateCache("movie-" + movie.id.toString(), listOf(movie))
+
+        intent.putExtra("movie", movie.id.toString())
+        startActivity(intent)
     }
 
     override fun setData(data: List<MovieResultsItem>?) {
@@ -115,6 +119,10 @@ open class DiscoverFragment : Fragment(), DiscoverContract.View, SearchView.OnQu
 
     override fun showError() {
         Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()
+    }
+
+    override fun noResult() {
+        Toast.makeText(context, "We could not find any movie", Toast.LENGTH_SHORT).show()
     }
 
 }

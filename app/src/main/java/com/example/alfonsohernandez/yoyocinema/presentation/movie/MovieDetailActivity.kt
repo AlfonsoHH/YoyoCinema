@@ -45,14 +45,9 @@ class MovieDetailActivity : AppCompatActivity(), MovieDetailContract.View {
 
         injectDependencies()
 
-        val list: List<MovieResultsItem> = Paper.book().read("discover")
-        Log.d(TAG, list.get(0).title)
-
         movieID = intent.getStringExtra("movie")
-        presenter.setView(this)
 
-        presenter.loadCache(movieID)
-        presenter.loadFirebaseData(movieID)
+        presenter.setView(this, movieID)
 
         imageButtonFav.setOnClickListener {
             onFavoriteClicked()
@@ -61,7 +56,7 @@ class MovieDetailActivity : AppCompatActivity(), MovieDetailContract.View {
     }
 
     override fun onDestroy() {
-        presenter.setView(null)
+        presenter.setView(null,"")
         super.onDestroy()
     }
 

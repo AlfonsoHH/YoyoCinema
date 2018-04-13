@@ -7,8 +7,8 @@ import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebasefavori
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.firebasefavorites.RemoveFavoriteMovieInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.preference.GetUserProfileInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResultsItem
-import com.example.alfonsohernandez.yoyocinema.storage.FirebaseCallback
-import com.google.firebase.database.DatabaseError
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -19,12 +19,17 @@ class MovieDetailPresenter @Inject constructor(private val getCacheInfoInteracto
     private var view: MovieDetailContract.View? = null
     private val TAG: String = "MovieDetailPresenter"
 
-    fun setView(view: MovieDetailContract.View?) {
+    fun setView(view: MovieDetailContract.View?, movieID: String) {
         this.view = view
+        loadCache(movieID)
+        loadFirebaseData(movieID)
     }
 
     override fun loadCache(movieId: String){
-        view?.setData(getCacheInfoInteractor.getInfoInCache("movie-"+movieId).get(0))
+        var movie = getCacheInfoInteractor.getInfoInCache("movie-"+movieId)
+        if(movie.isNotEmpty()){
+            view?.setData(movie.get(0))
+        }
     }
 
     override fun addFavorite(movie: MovieResultsItem) {
@@ -37,7 +42,7 @@ class MovieDetailPresenter @Inject constructor(private val getCacheInfoInteracto
 
     override fun loadFirebaseData(movieId: String) {
         view?.showProgress(true)
-        getFavoriteMoviesInteractor.getFirebaseDataMovies(getUserProfileInteractor.getProfile()?.firstName, object : FirebaseCallback<ArrayList<MovieResultsItem>> {
+        /*getFavoriteMoviesInteractor.getFirebaseDataMovies(getUserProfileInteractor.getProfile()?.firstName, object : FirebaseCallback<ArrayList<MovieResultsItem>> {
             override fun onDataReceived(data: ArrayList<MovieResultsItem>) {
                 view?.showProgress(false)
                 var existe = false
@@ -58,6 +63,40 @@ class MovieDetailPresenter @Inject constructor(private val getCacheInfoInteracto
                 view?.showError()
             }
 
-        })
+        })*/
+        getFavoriteMoviesInteractor
+                .getFirebaseDataMoviesRx(getUserProfileInteractor.getProfile()?.firstName)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        {
+                            view?.showProgress(false)
+
+                            var existe = false
+                            var favoritesList = arrayListOf<MovieResultsItem>()
+                            var movie = MovieResultsItem()
+
+                            for (h in it.children) {
+                                var movieFavFB = h.getValue(MovieResultsItem::class.java)
+                                movieFavFB?.let {it2 ->
+                                    if(it2!!.id.toString()==movieId){
+                                        Log.d(TAG,"existe")
+                                        existe=true
+                                        movie = it2
+                                    }
+                                    favoritesList.add(it2)
+                                }
+                            }
+
+                            view?.favoriteExist(existe)
+                            if(existe){
+                                view?.setData(movie)
+                            }
+                        },
+                        {
+                            view?.showProgress(false)
+                            view?.showError()
+                        }
+                )
     }
 }

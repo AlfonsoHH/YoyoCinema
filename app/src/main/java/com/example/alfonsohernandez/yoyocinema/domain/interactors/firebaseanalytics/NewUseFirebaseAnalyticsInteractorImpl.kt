@@ -7,7 +7,7 @@ import com.google.firebase.analytics.FirebaseAnalytics
 /**
  * Created by alfonsohernandez on 28/03/2018.
  */
-class NewUseFirebaseAnalyticsInteractorImpl(context: Context): NewUseFirebaseAnalyticsInteractor {
+open class NewUseFirebaseAnalyticsInteractorImpl(context: Context): NewUseFirebaseAnalyticsInteractor {
     var mFirebaseAnalytics: FirebaseAnalytics? = FirebaseAnalytics.getInstance(context)
 
     override fun sendingDataFirebaseAnalytics(id: String, activityName: String) {

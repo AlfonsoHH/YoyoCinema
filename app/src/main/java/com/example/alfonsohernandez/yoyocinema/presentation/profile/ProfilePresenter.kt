@@ -28,7 +28,7 @@ class ProfilePresenter @Inject constructor(
 
     override fun getProfileData() {
         val userProfile = getUserProfileInteractor.getProfile()
-        Log.d(TAG,"onSetView: "+userProfile?.language?.language)
+        //Log.d(TAG,"onSetView: "+userProfile?.language?.language)
 
         view?.setData(userProfile)
     }

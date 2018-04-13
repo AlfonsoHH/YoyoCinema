@@ -4,6 +4,7 @@ import com.example.alfonsohernandez.yoyocinema.domain.interactors.cache.GetCache
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.cache.SetCacheInfoInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.discovermovies.GetDiscoverMoviesInteractor
 import com.example.alfonsohernandez.yoyocinema.domain.interactors.searchmovies.GetSearchMoviesInteractor
+import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResponse
 import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResultsItem
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposable
@@ -11,7 +12,7 @@ import io.reactivex.schedulers.Schedulers
 import retrofit2.HttpException
 import javax.inject.Inject
 
-class DiscoverPresenter @Inject constructor(private val getCacheInfoInteractor: GetCacheInfoInteractor, private val setCacheInfoInteractor: SetCacheInfoInteractor, private val getDiscoverMoviesInteractor: GetDiscoverMoviesInteractor, private val getSearchMoviesInteractor: GetSearchMoviesInteractor) : DiscoverContract.Presenter {
+open class DiscoverPresenter @Inject constructor(private val getCacheInfoInteractor: GetCacheInfoInteractor, private val setCacheInfoInteractor: SetCacheInfoInteractor, private val getDiscoverMoviesInteractor: GetDiscoverMoviesInteractor, private val getSearchMoviesInteractor: GetSearchMoviesInteractor) : DiscoverContract.Presenter {
 
     private var view: DiscoverContract.View? = null
 
@@ -87,11 +88,17 @@ class DiscoverPresenter @Inject constructor(private val getCacheInfoInteractor: 
                 .observeOn(AndroidSchedulers.mainThread())
                 .subscribeOn(Schedulers.io())
                 .subscribe(
-                        {   view?.showProgress(false)
-                            updateCache("search-" + searchString, it.results)
-                            view?.setData(it.results)
+                        {
+                            view?.showProgress(false)
+                            if(it.results!!.isNotEmpty()) {
+                                updateCache("search-" + searchString, it.results)
+                                view?.setData(it.results)
+                            }else{
+                                view?.noResult()
+                            }
                         },
-                        {   view?.showProgress(false)
+                        {
+                            view?.showProgress(false)
                             view?.showError()
                         }
                 )

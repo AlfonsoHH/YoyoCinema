@@ -8,6 +8,8 @@ import com.example.alfonsohernandez.yoyocinema.domain.interactors.preference.Get
 import com.example.alfonsohernandez.yoyocinema.domain.models.MovieResultsItem
 import com.example.alfonsohernandez.yoyocinema.storage.FirebaseCallback
 import com.google.firebase.database.DatabaseError
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.schedulers.Schedulers
 import javax.inject.Inject
 
 /**
@@ -45,7 +47,26 @@ class FavoritesPresenter @Inject constructor(private val getCacheInfoInteractor:
     }
 
     override fun loadSearchData(searchString: String) {
-        getFavoriteMoviesInteractor.getFirebaseDataMovies(GetUserProfileInteractor.getProfile()?.firstName,
+        getFavoriteMoviesInteractor
+                .getFirebaseDataMoviesRx(GetUserProfileInteractor.getProfile()?.firstName)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe({
+                    view?.showProgress(false)
+                    var favoritesList = arrayListOf<MovieResultsItem>()
+                    for (h in it.children) {
+                        var movieFavFB = h.getValue(MovieResultsItem::class.java)
+                        movieFavFB?.let {it2 ->
+                            favoritesList.add(it2)
+                        }
+                    }
+                    val dataVar = favoritesList.filter { it.title!!.contains(searchString)  }
+                    view?.setData(dataVar)
+                },{
+                    view?.showProgress(false)
+                    view?.showError()
+                })
+/*        getFavoriteMoviesInteractor.getFirebaseDataMovies(GetUserProfileInteractor.getProfile()?.firstName,
                 object : FirebaseCallback<ArrayList<MovieResultsItem>> {
 
             override fun onDataReceived(data: ArrayList<MovieResultsItem>) {
@@ -57,12 +78,34 @@ class FavoritesPresenter @Inject constructor(private val getCacheInfoInteractor:
                 view?.showProgress(false)
                 view?.showError()
             }
-        })
+        })*/
     }
 
     override fun loadFirebaseData() {
         view?.showProgress(true)
-        getFavoriteMoviesInteractor.getFirebaseDataMovies(GetUserProfileInteractor.getProfile()?.firstName, object : FirebaseCallback<ArrayList<MovieResultsItem>> {
+        getFavoriteMoviesInteractor
+                .getFirebaseDataMoviesRx(GetUserProfileInteractor.getProfile()?.firstName)
+                .observeOn(AndroidSchedulers.mainThread())
+                .subscribeOn(Schedulers.io())
+                .subscribe(
+                        {
+                            Log.d(TAG,"Pelicula nueva")
+                            view?.showProgress(false)
+                            var favoritesList = arrayListOf<MovieResultsItem>()
+                            for (h in it.children) {
+                                var movieFavFB = h.getValue(MovieResultsItem::class.java)
+                                movieFavFB?.let {it2 ->
+                                    favoritesList.add(it2)
+                                }
+                            }
+                            updateUserCache(favoritesList)
+                            view?.setData(favoritesList)
+                        },
+                        {
+                            view?.showProgress(false)
+                            view?.showError()
+                        })
+/*        getFavoriteMoviesInteractor.getFirebaseDataMovies(GetUserProfileInteractor.getProfile()?.firstName, object : FirebaseCallback<ArrayList<MovieResultsItem>> {
             override fun onDataReceived(data: ArrayList<MovieResultsItem>) {
                 view?.showProgress(false)
                 updateUserCache(data)
@@ -74,13 +117,17 @@ class FavoritesPresenter @Inject constructor(private val getCacheInfoInteractor:
                 view?.showError()
             }
 
-        })
+        })*/
 
     }
 
     override fun loadSearchDataOffline(searchString: String) {
-        var list = loadCache()
-        view?.setData(list.filter { it.title!!.contains(searchString) })
+        var list = loadCache().filter { it.title!!.contains(searchString) }
+        if(list.size!=0){
+            view?.setData(list)
+        }else{
+            view?.showNoResults()
+        }
     }
 
 }

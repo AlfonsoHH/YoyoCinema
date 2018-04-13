@@ -6,6 +6,9 @@ import com.google.firebase.database.DataSnapshot
 import com.google.firebase.database.DatabaseError
 import com.google.firebase.database.FirebaseDatabase
 import com.google.firebase.database.ValueEventListener
+import durdinapps.rxfirebase2.RxFirebaseDatabase
+import io.reactivex.Flowable
+import io.reactivex.Maybe
 
 /**
  * Created by alfonsohernandez on 26/03/2018.
@@ -47,5 +50,9 @@ class FavoriteMoviesRepository {
                 callback.onDataReceived(favoritesList)
             }
         })
+    }
+
+    fun getMoviesForUserRx(userId: String?): Flowable<DataSnapshot> {
+        return RxFirebaseDatabase.observeValueEvent(firebaseInstance.child(userId))
     }
 }

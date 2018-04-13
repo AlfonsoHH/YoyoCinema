@@ -23,7 +23,7 @@ class MapPresenter @Inject constructor(private val getGoogleMapNearbyPlacesInter
     override fun loadSearchData(searchString: String, position: String, radius: Int) {
         view?.showProgress(true)
 
-        Log.d(TAG,searchString+" "+position+" "+radius.toString())
+        //Log.d(TAG,searchString+" "+position+" "+radius.toString())
 
         getGoogleMapNearbyPlacesInteractor
                 .getNearbyPlaces(searchString, position, radius)

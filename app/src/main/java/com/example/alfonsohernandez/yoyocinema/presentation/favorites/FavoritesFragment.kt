@@ -112,4 +112,8 @@ class FavoritesFragment : Fragment(), SearchView.OnQueryTextListener, FavoritesC
         Toast.makeText(context, "Network Error", Toast.LENGTH_SHORT).show()
     }
 
+    override fun showNoResults() {
+        Toast.makeText(context, "No results", Toast.LENGTH_SHORT).show()
+    }
+
 }
